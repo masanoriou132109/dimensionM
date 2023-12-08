@@ -5,10 +5,16 @@
 #include <iostream>
 #include <string>
 
+void show()
+{
+    std::cout << "motherfucker\n";
+}
+
 int main()
 {
     SDL_Window *global_window = NULL;
     SDL_Renderer *global_renderer = NULL;
+
     global_window =
         SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_SHOWN);
     if (global_window == NULL)
@@ -36,7 +42,8 @@ int main()
 
     SDL_Event e;
 
-    Button button0(global_renderer, "../images/button.png", 100, 100, &e);
+    Entity image(global_renderer, "../images/1.png", 30, 30, 300, 300);
+    Button button0(global_renderer, "../images/button.png", 500, 500, 300, 300, &e, (&show));
     button0.set_source(300, 200);
 
     bool quit = 0;
@@ -57,7 +64,10 @@ int main()
         // Clear screen
         SDL_SetRenderDrawColor(global_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(global_renderer);
+
+        image.display();
         button0.display();
+
         SDL_RenderPresent(global_renderer);
 
         // Render texture to screen
