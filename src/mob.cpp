@@ -1,6 +1,6 @@
-#include "chara.hpp"
+#include "mob.hpp"
 
-void Chara::set_source(int p_w, int p_h, int num_of_sprite, int p_how)
+void Mob::set_source(int p_w, int p_h, int num_of_sprite, int p_how)
 {
     rect_clip = new SDL_Rect[num_of_sprite];
     num_of_sprite_ = num_of_sprite;
@@ -27,7 +27,7 @@ void Chara::set_source(int p_w, int p_h, int num_of_sprite, int p_how)
     }
 }
 
-void Chara::handle_event(const Uint8 *p_keystate, SDL_Event *e)
+void Mob::handle_event(const Uint8 *p_keystate, SDL_Event *e)
 {
     if (e->type == SDL_KEYDOWN && e->key.keysym.sym == SDLK_f)
     {
@@ -47,7 +47,12 @@ void Chara::handle_event(const Uint8 *p_keystate, SDL_Event *e)
         {
             if (p_keystate[SDL_SCANCODE_W])
             {
-                vel_y = -speed_;
+                vel_y = -sqrt(3) / 2 * speed_;
+                vel_x = speed_ / 2;
+
+                w_ += speed_ * sin(60);
+                h_ += speed_ * sin(60);
+
                 if (p_keystate[SDL_SCANCODE_A])
                 {
                     vel_x = -speed_;
@@ -59,7 +64,12 @@ void Chara::handle_event(const Uint8 *p_keystate, SDL_Event *e)
             }
             if (p_keystate[SDL_SCANCODE_S])
             {
-                vel_y = speed_;
+                vel_y = sqrt(3) / 2 * speed_;
+                vel_x = -speed_ / 2;
+
+                w_ -= speed_ * sin(60);
+                h_ -= speed_ * sin(60);
+
                 if (p_keystate[SDL_SCANCODE_A])
                 {
                     vel_x = -speed_;
@@ -102,7 +112,7 @@ void Chara::handle_event(const Uint8 *p_keystate, SDL_Event *e)
             {
                 if (isJumping == false)
                 {
-                    vel_y = -10 * speed_;
+                    vel_y = -1.5 * speed_;
                     isJumping = true;
 
                     if (p_keystate[SDL_SCANCODE_A])
@@ -127,33 +137,34 @@ void Chara::handle_event(const Uint8 *p_keystate, SDL_Event *e)
                 vel_x = speed_;
             }
         }
-    }
-    std::cerr << "vel_x=" << vel_x << "vel_y=" << vel_y;
-
-    sprite++;
-    if (sprite == num_of_sprite_)
-    {
-        sprite = 0;
+        sprite++;
+        if (sprite == num_of_sprite_)
+        {
+            sprite = 0;
+        }
     }
 }
 
-void Chara::display()
+void Mob::display()
 {
+
     if (dimension_ == 3)
     {
         if (isJumping == true)
         {
+            std::cerr << "is jumping\n";
             y_ += vel_y;
             x_ += vel_x;
 
             // 模擬重力
 
-            vel_y += 5; // 增加一個向下的重力
+            vel_y += 0.3; // 增加一個向下的重力
 
             // 簡單的碰地判斷
-            if (y_ >= 500)
+            if ((y_ + h_) > 720)
             {
-                y_ = 500;
+                y_ = 720 - h_;
+                std::cerr << "\ntouch\n";
                 isJumping = false;
                 vel_y = 0;
             }
@@ -161,6 +172,7 @@ void Chara::display()
         else
         {
             x_ += vel_x;
+            y_ += vel_y;
         }
 
         on_window_ = {x_, y_, h_, w_};
@@ -193,9 +205,6 @@ void Chara::display()
         vel_x = 0;
         vel_y = 0;
     }
-}
-
-Chara::~Chara()
-{
-    SDL_DestroyTexture(texture_);
+    collider = {x_, y_, w_, h_};
+    SDL_Delay(5);
 }
