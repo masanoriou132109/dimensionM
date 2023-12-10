@@ -1,15 +1,27 @@
 #include "button.hpp"
 
-void Button::set_source(int p_w, int p_h)
+void Button::set_source(int p_w, int p_h, int num_of_sprite, bool p_how)
 {
-
-    rect_clip = new SDL_Rect[4];
-    for (int i = 0; i < 4; i++)
+    rect_clip = new SDL_Rect[num_of_sprite];
+    if (p_how)
     {
-        rect_clip[i].h = p_h;
-        rect_clip[i].w = p_w;
-        rect_clip[i].x = 0;
-        rect_clip[i].y = i * p_h;
+        for (int i = 0; i < num_of_sprite; i++)
+        {
+            rect_clip[i].h = p_h;
+            rect_clip[i].w = p_w;
+            rect_clip[i].x = 0;
+            rect_clip[i].y = i * p_h;
+        }
+    }
+    else
+    {
+        for (int i = 0; i < num_of_sprite; i++)
+        {
+            rect_clip[i].h = p_h;
+            rect_clip[i].w = p_w;
+            rect_clip[i].x = i * p_w;
+            rect_clip[i].y = 0;
+        }
     }
 }
 

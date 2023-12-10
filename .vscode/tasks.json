@@ -25,7 +25,8 @@
                 "${fileDirname}/${fileBasenameNoExtension}",
                 "main.cpp",
                 "button.cpp",
-                "entity.cpp"
+                "entity.cpp",
+                "chara.cpp"
             ],
             "options": {
                 "cwd": "${fileDirname}"

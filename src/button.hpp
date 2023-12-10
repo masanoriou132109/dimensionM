@@ -23,20 +23,23 @@ const int TOTAL_BUTTONS = 4;
 
 class Button : public Entity
 {
+
+  private:
+    LButtonSprite mCurrentSprite;
+    SDL_Event *e;
+    SDL_Rect *rect_clip;
+
   public:
     Button(SDL_Renderer *global_renderer, std::string image_path, int p_x, int p_y, int p_w, int p_h,
            SDL_Event *global_event,
            void (*mouse_event)()) // 除了entity原有的還要丟event和按下滑鼠之後要幹嘛(mouse_event)
         : Entity(global_renderer, image_path, p_x, p_y, p_w, p_h), e(global_event), do_(mouse_event){};
     ~Button();
-    void set_source(int p_w, int p_h); // 這可以設定在來源圖片裡你一個按鈕要框的大小(像lazy foo 那個就是300*200)
+    void set_source(
+        int p_w, int p_h, int num_of_sprites,
+        bool how); // 這可以設定在來源圖片裡你一個按鈕要框的大小(像lazy foo 那個就是300*200), 1往下數 0往右數
     void display();
     void handle_event(SDL_Event *e); // 這個函式要丟到while (SDL_PollEvent(&e) != 0)下面
-
-  private:
-    LButtonSprite mCurrentSprite;
-    SDL_Event *e;
-    SDL_Rect *rect_clip;
     void (*do_)();
 };
 

@@ -1,4 +1,5 @@
 #include "button.hpp"
+#include "chara.hpp"
 #include "entity.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
@@ -12,25 +13,25 @@ void show()
 
 int main()
 {
-    SDL_Window *global_window = NULL;
-    SDL_Renderer *global_renderer = NULL;
+    SDL_Window *g_window = NULL;
+    SDL_Renderer *g_renderer = NULL;
 
-    global_window =
+    g_window =
         SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_SHOWN);
-    if (global_window == NULL)
+    if (g_window == NULL)
     {
         printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
     }
-    global_renderer = SDL_CreateRenderer(global_window, -1, SDL_RENDERER_ACCELERATED);
+    g_renderer = SDL_CreateRenderer(g_window, -1, SDL_RENDERER_ACCELERATED);
 
-    if (global_renderer == NULL)
+    if (g_renderer == NULL)
     {
         printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
     }
     else
     {
         // Initialize renderer color
-        SDL_SetRenderDrawColor(global_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
         // Initialize PNG loading
         int imgFlags = IMG_INIT_PNG;
@@ -41,10 +42,14 @@ int main()
     }
 
     SDL_Event e;
+    const Uint8 *key_state = SDL_GetKeyboardState(NULL);
 
-    Entity image(global_renderer, "../images/1.png", 30, 30, 300, 300);
-    Button button0(global_renderer, "../images/button.png", 500, 500, 300, 300, &e, (&show));
-    button0.set_source(300, 200);
+    // Entity image(g_renderer, "../images/1.png", 30, 30, 300, 300);
+    // Entity image2(g_renderer, "../images/3.jpg", 500, 80, 100, 100);
+    // Button button0(g_renderer, "../images/button.png", 300, 300, 300, 300, &e, (&show));
+    // button0.set_source(300, 200, 4, 1);
+    Chara ch1(g_renderer, "../images/anime.png", 70, 500, 200, 200, &e, 3, 10);
+    ch1.set_source(64, 200, 4, 0);
 
     bool quit = 0;
 
@@ -58,17 +63,21 @@ int main()
             {
                 quit = true;
             }
-            button0.handle_event(&e);
+            key_state = SDL_GetKeyboardState(NULL);
+            ch1.handle_event(key_state, &e);
+            // button0.handle_event(&e);
         }
 
         // Clear screen
-        SDL_SetRenderDrawColor(global_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-        SDL_RenderClear(global_renderer);
+        SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_RenderClear(g_renderer);
 
-        image.display();
-        button0.display();
+        ch1.display();
+        // image.display();
+        // image2.display();
+        // button0.display();
 
-        SDL_RenderPresent(global_renderer);
+        SDL_RenderPresent(g_renderer);
 
         // Render texture to screen
         // image.display();
