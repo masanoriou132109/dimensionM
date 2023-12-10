@@ -1,10 +1,25 @@
 #include "button.hpp"
-#include "chara.hpp"
 #include "entity.hpp"
+#include "mob.hpp"
+#include "solid.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 #include <iostream>
 #include <string>
+
+const int SCREEN_FPS = 10;
+const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
+/*
+void collision(SDL_Rect collider_subject, SDL_Rect collider_object)
+{
+    if (collider_subject.x < (collider_object.x + collider_object.w) &&
+        (collider_subject.x + collider_subject.w) > collider_object.x &&
+        collider_subject.y < (collider_object.y + collider_object.h) &&
+        (collider_subject.y + collider_subject.h) > collider_object.y)
+    {
+        std::cout << "collided\n";
+    }
+}*/
 
 void show()
 {
@@ -48,8 +63,10 @@ int main()
     // Entity image2(g_renderer, "../images/3.jpg", 500, 80, 100, 100);
     // Button button0(g_renderer, "../images/button.png", 300, 300, 300, 300, &e, (&show));
     // button0.set_source(300, 200, 4, 1);
-    Chara ch1(g_renderer, "../images/anime.png", 70, 500, 200, 200, &e, 3, 10);
-    ch1.set_source(64, 200, 4, 0);
+    Mob ch1(g_renderer, "../images/anime.png", 70, 500, 200, 200, &e, 3, 10);
+    ch1.set_source(56, 185, 4, 0);
+    Mob ch2(g_renderer, "../images/anime.png", 700, 500, 200, 200, &e, 3, 2);
+    ch2.set_source(56, 185, 2, 0);
 
     bool quit = 0;
 
@@ -65,6 +82,7 @@ int main()
             }
             key_state = SDL_GetKeyboardState(NULL);
             ch1.handle_event(key_state, &e);
+            ch2.handle_event(key_state, &e);
             // button0.handle_event(&e);
         }
 
@@ -73,10 +91,11 @@ int main()
         SDL_RenderClear(g_renderer);
 
         ch1.display();
+        ch2.display();
         // image.display();
         // image2.display();
         // button0.display();
-
+        ch2.collision(ch1);
         SDL_RenderPresent(g_renderer);
 
         // Render texture to screen

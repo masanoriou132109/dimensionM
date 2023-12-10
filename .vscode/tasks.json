@@ -26,7 +26,8 @@
                 "main.cpp",
                 "button.cpp",
                 "entity.cpp",
-                "chara.cpp"
+                "mob.cpp",
+                "solid.cpp"
             ],
             "options": {
                 "cwd": "${fileDirname}"

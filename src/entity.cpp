@@ -1,9 +1,4 @@
-
-#include <SDL2/SDL.h>
-#include <SDL2_image/SDL_image.h>
-
 #include "entity.hpp"
-#include <string>
 
 Entity::Entity(SDL_Renderer *global_renderer, std::string image_path, int p_x, int p_y, int p_w, int p_h)
     : renderer_(global_renderer), x_(p_x), y_(p_y), w_(p_w), h_(p_h)
