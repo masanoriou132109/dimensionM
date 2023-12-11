@@ -1,33 +1,25 @@
 #include "button.hpp"
 
-void Button::set_source(int p_w, int p_h, int num_of_sprite, bool p_how)
-{
-    rect_clip = new SDL_Rect[num_of_sprite];
-    if (p_how)
-    {
-        for (int i = 0; i < num_of_sprite; i++)
-        {
-            rect_clip[i].h = p_h;
-            rect_clip[i].w = p_w;
-            rect_clip[i].x = 0;
-            rect_clip[i].y = i * p_h;
-        }
-    }
-    else
-    {
-        for (int i = 0; i < num_of_sprite; i++)
-        {
-            rect_clip[i].h = p_h;
-            rect_clip[i].w = p_w;
-            rect_clip[i].x = i * p_w;
-            rect_clip[i].y = 0;
-        }
-    }
-}
-
 void Button::display()
 {
-    SDL_RenderCopyEx(renderer_, texture_, &rect_clip[mCurrentSprite], &on_window_, 0, NULL, SDL_FLIP_NONE);
+    std::cerr << state << '\n';
+    switch (state)
+    {
+    case BUTTON_SPRITE_MOUSE_OUT:
+        SDL_RenderCopyEx(renderer_, texture_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+        break;
+
+    case BUTTON_SPRITE_MOUSE_OVER_MOTION:
+        SDL_RenderCopyEx(renderer_, texture2_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+        break;
+
+    case BUTTON_SPRITE_MOUSE_DOWN:
+        SDL_RenderCopyEx(renderer_, texture3_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+        break;
+    case BUTTON_SPRITE_MOUSE_UP:
+        SDL_RenderCopyEx(renderer_, texture2_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+        break;
+    }
 }
 
 void Button::handle_event(SDL_Event *e)
@@ -40,7 +32,7 @@ void Button::handle_event(SDL_Event *e)
         SDL_GetMouseState(&x, &y);
 
         // Check if mouse is in button
-        bool inside = false;
+        inside = false;
 
         // Mouse is left of the button
         if (x > x_ && x < x_ + w_ && y > y_ && y < y_ + h_)
@@ -52,7 +44,7 @@ void Button::handle_event(SDL_Event *e)
         // Mouse is outside button
         if (!inside)
         {
-            mCurrentSprite = BUTTON_SPRITE_MOUSE_OUT;
+            state = BUTTON_SPRITE_MOUSE_OUT;
         }
         // Mouse is inside button
         else
@@ -61,17 +53,15 @@ void Button::handle_event(SDL_Event *e)
             switch (e->type)
             {
             case SDL_MOUSEMOTION:
-                mCurrentSprite = BUTTON_SPRITE_MOUSE_OVER_MOTION;
+                state = BUTTON_SPRITE_MOUSE_OVER_MOTION;
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
-                mCurrentSprite = BUTTON_SPRITE_MOUSE_DOWN;
+                state = BUTTON_SPRITE_MOUSE_DOWN;
                 do_();
                 break;
-
             case SDL_MOUSEBUTTONUP:
-                mCurrentSprite = BUTTON_SPRITE_MOUSE_UP;
-
+                state = BUTTON_SPRITE_MOUSE_UP;
                 break;
             }
         }
@@ -81,5 +71,4 @@ void Button::handle_event(SDL_Event *e)
 Button::~Button()
 {
     SDL_DestroyTexture(texture_);
-    delete[] rect_clip;
 }

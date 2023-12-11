@@ -1,36 +1,22 @@
 #include "mob.hpp"
 
-void Mob::set_source(int p_w, int p_h, int num_of_sprite, int p_how)
+void Mob::set_source(std::string image_path2, std::string image_path3, std::string image_path4)
 {
-    rect_clip = new SDL_Rect[num_of_sprite];
-    num_of_sprite_ = num_of_sprite;
-
-    if (p_how == 1)
-    {
-        for (int i = 0; i < num_of_sprite; i++)
-        {
-            rect_clip[i].h = p_h;
-            rect_clip[i].w = p_w;
-            rect_clip[i].x = 0;
-            rect_clip[i].y = i * p_h;
-        }
-    }
-    else
-    {
-        for (int i = 0; i < num_of_sprite; i++)
-        {
-            rect_clip[i].h = p_h;
-            rect_clip[i].w = p_w;
-            rect_clip[i].x = i * p_w;
-            rect_clip[i].y = 0;
-        }
-    }
+    texture2_ = IMG_LoadTexture(renderer_, image_path2.c_str());
+    texture3_ = IMG_LoadTexture(renderer_, image_path3.c_str());
+    texture4_ = IMG_LoadTexture(renderer_, image_path4.c_str());
+    hasSprite = true;
 }
 
 void Mob::handle_event(const Uint8 *p_keystate, SDL_Event *e)
 {
     if (e->type == SDL_KEYDOWN && e->key.keysym.sym == SDLK_f)
     {
+        if (hasSprite)
+        {
+            sprite--;
+        }
+
         if (dimension_ == 3)
         {
             dimension_ = 2;
@@ -38,6 +24,7 @@ void Mob::handle_event(const Uint8 *p_keystate, SDL_Event *e)
         else
         {
             dimension_ = 3;
+            isJumping = true;
         }
     }
 
@@ -137,10 +124,14 @@ void Mob::handle_event(const Uint8 *p_keystate, SDL_Event *e)
                 vel_x = speed_;
             }
         }
-        sprite++;
-        if (sprite == num_of_sprite_)
+
+        if (hasSprite)
         {
-            sprite = 0;
+            sprite++;
+            if (sprite == 4)
+            {
+                sprite = 0;
+            }
         }
     }
 }
@@ -152,7 +143,6 @@ void Mob::display()
     {
         if (isJumping == true)
         {
-            std::cerr << "is jumping\n";
             y_ += vel_y;
             x_ += vel_x;
 
@@ -179,11 +169,41 @@ void Mob::display()
 
         if (face == RIGHT)
         {
-            SDL_RenderCopyEx(renderer_, texture_, &rect_clip[sprite], &on_window_, 0, NULL, SDL_FLIP_HORIZONTAL);
+            switch (sprite)
+            {
+            case 0:
+                SDL_RenderCopyEx(renderer_, texture_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+                break;
+            case 1:
+                SDL_RenderCopyEx(renderer_, texture2_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+                break;
+            case 2:
+                SDL_RenderCopyEx(renderer_, texture3_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+                break;
+            case 3:
+                SDL_RenderCopyEx(renderer_, texture4_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+            default:
+                break;
+            }
         }
         else
         {
-            SDL_RenderCopyEx(renderer_, texture_, &rect_clip[sprite], &on_window_, 0, NULL, SDL_FLIP_NONE);
+            switch (sprite)
+            {
+            case 0:
+                SDL_RenderCopyEx(renderer_, texture_, NULL, &on_window_, 0, NULL, SDL_FLIP_HORIZONTAL);
+                break;
+            case 1:
+                SDL_RenderCopyEx(renderer_, texture2_, NULL, &on_window_, 0, NULL, SDL_FLIP_HORIZONTAL);
+                break;
+            case 2:
+                SDL_RenderCopyEx(renderer_, texture3_, NULL, &on_window_, 0, NULL, SDL_FLIP_HORIZONTAL);
+                break;
+            case 3:
+                SDL_RenderCopyEx(renderer_, texture4_, NULL, &on_window_, 0, NULL, SDL_FLIP_HORIZONTAL);
+            default:
+                break;
+            }
         }
         vel_x = 0;
     }
@@ -196,15 +216,45 @@ void Mob::display()
 
         if (face == RIGHT)
         {
-            SDL_RenderCopyEx(renderer_, texture_, &rect_clip[sprite], &on_window_, 0, NULL, SDL_FLIP_HORIZONTAL);
+            switch (sprite)
+            {
+            case 0:
+                SDL_RenderCopyEx(renderer_, texture_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+                break;
+            case 1:
+                SDL_RenderCopyEx(renderer_, texture2_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+                break;
+            case 2:
+                SDL_RenderCopyEx(renderer_, texture3_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+                break;
+            case 3:
+                SDL_RenderCopyEx(renderer_, texture4_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+            default:
+                break;
+            }
         }
         else
         {
-            SDL_RenderCopyEx(renderer_, texture_, &rect_clip[sprite], &on_window_, 0, NULL, SDL_FLIP_NONE);
+            switch (sprite)
+            {
+            case 0:
+                SDL_RenderCopyEx(renderer_, texture_, NULL, &on_window_, 0, NULL, SDL_FLIP_HORIZONTAL);
+                break;
+            case 1:
+                SDL_RenderCopyEx(renderer_, texture2_, NULL, &on_window_, 0, NULL, SDL_FLIP_HORIZONTAL);
+                break;
+            case 2:
+                SDL_RenderCopyEx(renderer_, texture3_, NULL, &on_window_, 0, NULL, SDL_FLIP_HORIZONTAL);
+                break;
+            case 3:
+                SDL_RenderCopyEx(renderer_, texture4_, NULL, &on_window_, 0, NULL, SDL_FLIP_HORIZONTAL);
+            default:
+                break;
+            }
         }
         vel_x = 0;
         vel_y = 0;
     }
     collider = {x_, y_, w_, h_};
-    SDL_Delay(5);
+    SDL_Delay(10);
 }

@@ -5,8 +5,6 @@
 class Solid : public Entity
 {
   protected:
-    int sprite = 0;
-    int num_of_sprite_;
     SDL_Event *e;
     SDL_Rect *rect_clip;
 
@@ -15,7 +13,8 @@ class Solid : public Entity
           SDL_Event *global_event)
         : Entity(global_renderer, image_path, p_x, p_y, p_w, p_h), e(global_event){};
     SDL_Rect collider = {x_, y_, w_, h_};
-    void collision(Solid &target);
+
+    bool collision(Solid &target);
     void display();
 };
 

@@ -61,12 +61,13 @@ int main()
 
     // Entity image(g_renderer, "../images/1.png", 30, 30, 300, 300);
     // Entity image2(g_renderer, "../images/3.jpg", 500, 80, 100, 100);
-    // Button button0(g_renderer, "../images/button.png", 300, 300, 300, 300, &e, (&show));
-    // button0.set_source(300, 200, 4, 1);
-    Mob ch1(g_renderer, "../images/anime.png", 70, 500, 200, 200, &e, 3, 10);
-    ch1.set_source(56, 185, 4, 0);
-    Mob ch2(g_renderer, "../images/anime.png", 700, 500, 200, 200, &e, 3, 2);
-    ch2.set_source(56, 185, 2, 0);
+    // Button button0(g_renderer, "../images/littlepg.png", "../images/brown1.png", "../images/brown2.png", 300, 300,
+    // 300,
+    //               300, &e, (&show));
+    Mob ch1(g_renderer, "../images/brown2.png", 70, 500, 200, 200, &e, 3, 10);
+    // ch1.set_source("../images/brown2.png", "../images/brown2.png", "../images/brown2.png");
+    //  Mob ch2(g_renderer, "../images/anime.png", 700, 500, 200, 200, &e, 3, 2);
+    //  ch2.set_source(56, 185, 2, 0);
 
     bool quit = 0;
 
@@ -82,7 +83,7 @@ int main()
             }
             key_state = SDL_GetKeyboardState(NULL);
             ch1.handle_event(key_state, &e);
-            ch2.handle_event(key_state, &e);
+            //  ch2.handle_event(key_state, &e);
             // button0.handle_event(&e);
         }
 
@@ -91,11 +92,11 @@ int main()
         SDL_RenderClear(g_renderer);
 
         ch1.display();
-        ch2.display();
-        // image.display();
-        // image2.display();
+        //  ch2.display();
+        //   image.display();
+        //   image2.display();
         // button0.display();
-        ch2.collision(ch1);
+        // ch2.collision(ch1);
         SDL_RenderPresent(g_renderer);
 
         // Render texture to screen
