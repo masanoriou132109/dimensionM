@@ -2,7 +2,7 @@
 
 void Solid::display()
 {
-    collider = {x_, y_, w_, h_};
+    collider = {int(x_), int(y_), int(w_), int(h_)};
 
     SDL_RenderCopy(renderer_, texture_, NULL, &on_window_);
 }

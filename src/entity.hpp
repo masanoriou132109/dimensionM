@@ -9,15 +9,21 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+#include <vector>
+
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
+
 class Entity
 {
   protected:
-    int x_, y_, w_, h_;
+    float x_, y_, w_, h_;
     SDL_Texture *texture_;
     SDL_Renderer *renderer_;
     SDL_Rect on_window_;
 
   public:
+    Entity(){};
     Entity(SDL_Renderer *global_renderer, std::string image_path, int p_x, int p_y, int p_w,
            int p_h); // 傳入renderer, 圖片檔, 實體x、y座標, 長寬
     ~Entity();

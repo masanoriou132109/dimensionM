@@ -4,7 +4,7 @@ Entity::Entity(SDL_Renderer *global_renderer, std::string image_path, int p_x, i
     : renderer_(global_renderer), x_(p_x), y_(p_y), w_(p_w), h_(p_h)
 {
     texture_ = IMG_LoadTexture(renderer_, image_path.c_str());
-    on_window_ = {x_, y_, w_, h_};
+    on_window_ = {int(x_), int(y_), int(w_), int(h_)};
 
     std::cout << "texture loaded\n";
 }

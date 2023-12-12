@@ -1,13 +1,15 @@
 #include "button.hpp"
-#include "entity.hpp"
-#include "mob.hpp"
-#include "solid.hpp"
+#include "player.hpp"
+
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 #include <iostream>
 #include <string>
+#include <vector>
 
-const int SCREEN_FPS = 10;
+std::vector<int> vec = {0, 1, 2, 3};
+
+const int SCREEN_FPS = 60;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 /*
 void collision(SDL_Rect collider_subject, SDL_Rect collider_object)
@@ -31,8 +33,8 @@ int main()
     SDL_Window *g_window = NULL;
     SDL_Renderer *g_renderer = NULL;
 
-    g_window =
-        SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_SHOWN);
+    g_window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
+                                SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (g_window == NULL)
     {
         printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -64,34 +66,36 @@ int main()
     // Button button0(g_renderer, "../images/littlepg.png", "../images/brown1.png", "../images/brown2.png", 300, 300,
     // 300,
     //               300, &e, (&show));
-    Mob ch1(g_renderer, "../images/brown2.png", 70, 500, 200, 200, &e, 3, 10);
-    // ch1.set_source("../images/brown2.png", "../images/brown2.png", "../images/brown2.png");
-    //  Mob ch2(g_renderer, "../images/anime.png", 700, 500, 200, 200, &e, 3, 2);
-    //  ch2.set_source(56, 185, 2, 0);
+    Player ch1(g_renderer, "../images/1.png", 70, 500, 200, 200, &e, 5);
+    ch1.set_source("../images/2.png", "../images/4.png", "../images/3.png");
+    Weapon a1(g_renderer, 30, 30, DIFFERENTIATE);
+    //    Player ch2(g_renderer, "../images/anime.png", 700, 500, 200, 200, &e, 3, 2);
+    //    ch2.set_source(56, 185, 2, 0);
 
     bool quit = 0;
 
     while (!quit)
     {
         // Handle events on queue
-        while (SDL_PollEvent(&e) != 0)
+        SDL_PollEvent(&e);
+
+        // User requests quit
+        if (e.type == SDL_QUIT)
         {
-            // User requests quit
-            if (e.type == SDL_QUIT)
-            {
-                quit = true;
-            }
-            key_state = SDL_GetKeyboardState(NULL);
-            ch1.handle_event(key_state, &e);
-            //  ch2.handle_event(key_state, &e);
-            // button0.handle_event(&e);
+            quit = true;
         }
+        key_state = SDL_GetKeyboardState(NULL);
+        ch1.handle_event(key_state, &e);
+        //  ch2.handle_event(key_state, &e);
+        // button0.handle_event(&e);
 
         // Clear screen
         SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(g_renderer);
 
         ch1.display();
+        a1.display();
+        ch1.pick(a1);
         //  ch2.display();
         //   image.display();
         //   image2.display();
