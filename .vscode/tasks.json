@@ -24,10 +24,11 @@
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
                 "main.cpp",
-                "button.cpp",
                 "entity.cpp",
-                "mob.cpp",
-                "solid.cpp"
+                "solid.cpp",
+                "player.cpp",
+                "weapon.cpp",
+                "mob.cpp"
             ],
             "options": {
                 "cwd": "${fileDirname}"

@@ -313,33 +313,83 @@ void Player::display()
     SDL_Delay(10);
 }
 
-void Player::pick(Weapon &target)
+void Player::pick(std::vector<Weapon> wps)
 {
-    if (collider.x < (target.collider.x + target.collider.w) && (collider.x + collider.w) > target.collider.x &&
-        collider.y < (target.collider.y + target.collider.h) && (collider.y + collider.h) > target.collider.y)
+    for (auto i : wps)
     {
-        // weapon_.push_back(target.attack_);
-        target.picked = true;
-        taking_weapon = true;
-    }
-
-    if (!shooting)
-    {
-        target.collider.x = x_ + w_;
-        target.collider.y = y_;
-    }
-    else
-    {
-        if (target.picked)
+        if (collider.x < (i.collider.x + i.collider.w) && (collider.x + collider.w) > i.collider.x &&
+            collider.y < (i.collider.y + i.collider.h) && (collider.y + collider.h) > i.collider.y)
         {
-            target.collider.x += 6;
+            weapon_.push_back(i.attack_);
+            i.picked = true;
+        }
+    }
 
-            SDL_RenderCopy(target.renderer_, target.texture_, NULL, &target.collider);
-
-            if (target.collider.x > SCREEN_WIDTH)
+    for (auto i : wps)
+    {
+        if (i.picked)
+        {
+            if (!shooting)
             {
-                shooting = false;
+                i.collider.x = x_ + w_;
+                i.collider.y = y_;
+            }
+            else
+            {
+                i.collider.x += 6;
+
+                SDL_RenderCopy(i.renderer_, i.texture_, NULL, &i.collider);
+
+                if (i.collider.x > SCREEN_WIDTH)
+                {
+                    shooting = false;
+                }
             }
         }
+    }
+
+    /*
+        if (collider.x < (target.collider.x + target.collider.w) && (collider.x + collider.w) > target.collider.x &&
+            collider.y < (target.collider.y + target.collider.h) && (collider.y + collider.h) > target.collider.y)
+        {
+            // weapon_.push_back(target.attack_);
+            target.picked = true;
+            taking_weapon = true;
+        }
+
+        if (!shooting)
+        {
+            target.collider.x = x_ + w_;
+            target.collider.y = y_;
+        }
+        else
+        {
+            if (target.picked)
+            {
+                target.collider.x += 6;
+
+                SDL_RenderCopy(target.renderer_, target.texture_, NULL, &target.collider);
+
+                if (target.collider.x > SCREEN_WIDTH)
+                {
+                    shooting = false;
+                }
+            }
+        }*/
+}
+
+void Player::attacked(Fodder &fod)
+{
+    if (collision(fod) == true)
+    {
+        hp_ -= fod.getatk();
+    }
+
+    if (hp_ <= 0)
+    {
+        SDL_DestroyTexture(texture_);
+        SDL_DestroyTexture(texture2_);
+        SDL_DestroyTexture(texture3_);
+        SDL_DestroyTexture(texture4_);
     }
 }
