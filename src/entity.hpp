@@ -4,9 +4,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 #include <SDL2_ttf/SDL_ttf.h>
-
-#include <SDL2/SDL.h>
-#include <SDL2_image/SDL_image.h>
 #include <cmath>
 #include <iostream>
 #include <string>
@@ -15,13 +12,13 @@
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
-class Entity
+class Entity // 就只是一個實體，沒有特別功能
 {
   protected:
-    float x_, y_, w_, h_;
+    float x_, y_, w_, h_; // 座標、長寬
     SDL_Texture *texture_;
     SDL_Renderer *renderer_;
-    SDL_Rect on_window_;
+    SDL_Rect on_window_; // for 螢幕上顯示
 
   public:
     Entity(){};

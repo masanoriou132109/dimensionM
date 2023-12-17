@@ -22,11 +22,9 @@ Weapon::Weapon(SDL_Renderer *global_renderer, float p_x, float p_y, Math p_attac
         break;
     case LAPLACE_TRANS:
         texture_ = IMG_LoadTexture(renderer_, "../images/lapt.png");
+        break;
     default:
         break;
-    }
-    if (texture_ != NULL)
-    {
     }
 }
 

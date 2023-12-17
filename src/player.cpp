@@ -20,17 +20,6 @@ void Player::handle_event(const Uint8 *p_keystate, SDL_Event *e)
         }
     }
 
-    if (p_keystate[SDL_SCANCODE_SPACE])
-    {
-        if (taking_weapon)
-        {
-            if (!shooting)
-            {
-                shooting = true;
-            }
-        }
-    }
-
     if (dimension_ == 2)
     {
         if (p_keystate[SDL_SCANCODE_W])
@@ -120,6 +109,116 @@ void Player::handle_event(const Uint8 *p_keystate, SDL_Event *e)
         }
     }
 
+    if (p_keystate[SDL_SCANCODE_G] && !isShooting)
+    {
+        for (auto i : weapon_)
+        {
+            if (i == DIFFERENTIATE)
+            {
+                shooting = DIFFERENTIATE;
+                isShooting = true;
+                bullet = {on_window_.x, on_window_.y, 100, 50};
+                if (face == LEFT)
+                {
+                    bullet_dir = {-4, 0};
+                }
+                else
+                {
+                    bullet_dir = {4, 0};
+                }
+                break;
+            }
+        }
+    }
+
+    if (p_keystate[SDL_SCANCODE_H] && !isShooting)
+    {
+        for (auto i : weapon_)
+        {
+            if (i == INTEGRATION)
+            {
+                shooting = INTEGRATION;
+                isShooting = true;
+                bullet = {on_window_.x, on_window_.y, 100, 50};
+                if (face == LEFT)
+                {
+                    bullet_dir = {-4, 0};
+                }
+                else
+                {
+                    bullet_dir = {4, 0};
+                }
+                break;
+            }
+        }
+    }
+
+    if (p_keystate[SDL_SCANCODE_J] && !isShooting)
+    {
+        for (auto i : weapon_)
+        {
+            if (i == DE_FOURIER)
+            {
+                shooting = DE_FOURIER;
+                isShooting = true;
+                bullet = {on_window_.x, on_window_.y, 100, 50};
+                if (face == LEFT)
+                {
+                    bullet_dir = {-4, 0};
+                }
+                else
+                {
+                    bullet_dir = {4, 0};
+                }
+                break;
+            }
+        }
+    }
+
+    if (p_keystate[SDL_SCANCODE_K] && !isShooting)
+    {
+        for (auto i : weapon_)
+        {
+            if (i == TAYLOR_SERIES)
+            {
+                shooting = TAYLOR_SERIES;
+                isShooting = true;
+                bullet = {on_window_.x, on_window_.y, 100, 50};
+                if (face == LEFT)
+                {
+                    bullet_dir = {-4, 0};
+                }
+                else
+                {
+                    bullet_dir = {4, 0};
+                }
+                break;
+            }
+        }
+    }
+
+    if (p_keystate[SDL_SCANCODE_L] && !isShooting)
+    {
+        for (auto i : weapon_)
+        {
+            if (i == LAPLACE_TRANS)
+            {
+                shooting = LAPLACE_TRANS;
+                isShooting = true;
+                bullet = {on_window_.x, on_window_.y, 100, 50};
+                if (face == LEFT)
+                {
+                    bullet_dir = {-4, 0};
+                }
+                else
+                {
+                    bullet_dir = {4, 0};
+                }
+                break;
+            }
+        }
+    }
+
     if (hasSprite)
     {
         sprite++;
@@ -132,7 +231,6 @@ void Player::handle_event(const Uint8 *p_keystate, SDL_Event *e)
 
 void Player::display()
 {
-
     if (dimension_ == 3)
     {
         if (isJumping == true)
@@ -171,7 +269,7 @@ void Player::display()
                 vel_y = 0;
             }
         }
-        else
+        else // not jumping
         {
             x_ += vel_x;
             y_ += vel_y;
@@ -220,7 +318,7 @@ void Player::display()
                 break;
             }
         }
-        else
+        else // face == LEFT
         {
             switch (sprite / 5)
             {
@@ -241,7 +339,7 @@ void Player::display()
         }
         vel_x = 0;
     }
-    else
+    else // dimension == 2
     {
         x_ += vel_x;
         y_ += vel_y;
@@ -287,7 +385,7 @@ void Player::display()
                 break;
             }
         }
-        else
+        else // face == LEFT
         {
             switch (sprite / 5)
             {
@@ -306,90 +404,77 @@ void Player::display()
                 break;
             }
         }
+
         vel_x = 0;
         vel_y = 0;
     }
+
+    if (isShooting)
+    {
+        bullet.x += bullet_dir.x * 3;
+        bullet.y += bullet_dir.y * 3;
+        switch (shooting)
+        {
+        case DIFFERENTIATE:
+            SDL_RenderCopy(renderer_, atk1, NULL, &bullet);
+            break;
+        case INTEGRATION:
+            SDL_RenderCopy(renderer_, atk2, NULL, &bullet);
+            break;
+        case DE_FOURIER:
+            SDL_RenderCopy(renderer_, atk3, NULL, &bullet);
+            break;
+        case TAYLOR_SERIES:
+            SDL_RenderCopy(renderer_, atk4, NULL, &bullet);
+            break;
+        case LAPLACE_TRANS:
+            SDL_RenderCopy(renderer_, atk5, NULL, &bullet);
+            break;
+        default:
+
+            break;
+        }
+
+        if (bullet.x < 0 || bullet.x > 1280 || bullet.y > 720 || bullet.y < 0)
+        {
+            isShooting = false;
+            shooting = NONE;
+            bullet = {int(x_), int(y_), 0, 0};
+        }
+    }
+
     collider = {int(x_), int(y_), int(h_), int(w_)};
     SDL_Delay(10);
 }
 
-void Player::pick(std::vector<Weapon> wps)
+void Player::detect(std::vector<Weapon *> wps, std::vector<Fodder *> fods, std::vector<Solid *> obst)
 {
     for (auto i : wps)
     {
-        if (collider.x < (i.collider.x + i.collider.w) && (collider.x + collider.w) > i.collider.x &&
-            collider.y < (i.collider.y + i.collider.h) && (collider.y + collider.h) > i.collider.y)
+        if (collider.x < (i->collider.x + i->collider.w) && (collider.x + collider.w) > i->collider.x &&
+            collider.y < (i->collider.y + i->collider.h) && (collider.y + collider.h) > i->collider.y)
         {
-            weapon_.push_back(i.attack_);
-            i.picked = true;
+            weapon_.push_back(i->attack_);
+            i->picked = true;
         }
     }
 
-    for (auto i : wps)
+    for (auto i : fods)
     {
-        if (i.picked)
+        if (collider.x < (i->collider.x + i->collider.w) && (collider.x + collider.w) > i->collider.x &&
+            collider.y < (i->collider.y + i->collider.h) && (collider.y + collider.h) > i->collider.y)
         {
-            if (!shooting)
-            {
-                i.collider.x = x_ + w_;
-                i.collider.y = y_;
-            }
-            else
-            {
-                i.collider.x += 6;
-
-                SDL_RenderCopy(i.renderer_, i.texture_, NULL, &i.collider);
-
-                if (i.collider.x > SCREEN_WIDTH)
-                {
-                    shooting = false;
-                }
-            }
+            hp_ -= i->atk_;
         }
     }
 
-    /*
-        if (collider.x < (target.collider.x + target.collider.w) && (collider.x + collider.w) > target.collider.x &&
-            collider.y < (target.collider.y + target.collider.h) && (collider.y + collider.h) > target.collider.y)
-        {
-            // weapon_.push_back(target.attack_);
-            target.picked = true;
-            taking_weapon = true;
-        }
-
-        if (!shooting)
-        {
-            target.collider.x = x_ + w_;
-            target.collider.y = y_;
-        }
-        else
-        {
-            if (target.picked)
-            {
-                target.collider.x += 6;
-
-                SDL_RenderCopy(target.renderer_, target.texture_, NULL, &target.collider);
-
-                if (target.collider.x > SCREEN_WIDTH)
-                {
-                    shooting = false;
-                }
-            }
-        }*/
-}
-
-void Player::attacked(Fodder &fod)
-{
-    if (collision(fod) == true)
+    for (auto i : obst)
     {
-        hp_ -= fod.getatk();
-    }
-
-    if (hp_ <= 0)
-    {
-        SDL_DestroyTexture(texture_);
-        SDL_DestroyTexture(texture2_);
-        SDL_DestroyTexture(texture3_);
-        SDL_DestroyTexture(texture4_);
+        if (collider.x < (i->collider.x + i->collider.w) && (collider.x + collider.w) > i->collider.x &&
+            collider.y < (i->collider.y + i->collider.h) && (collider.y + collider.h) > i->collider.y)
+        {
+            x_ -= vel_x;
+            y_ -= vel_y;
+        }
     }
 }

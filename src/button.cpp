@@ -32,17 +32,17 @@ void Button::handle_event(SDL_Event *e)
         SDL_GetMouseState(&x, &y);
 
         // Check if mouse is in button
-        inside = false;
+        isInside = false;
 
         // Mouse is left of the button
         if (x > x_ && x < x_ + w_ && y > y_ && y < y_ + h_)
         {
-            inside = true;
+            isInside = true;
         }
         // Mouse is right of the button
 
         // Mouse is outside button
-        if (!inside)
+        if (!isInside)
         {
             state = BUTTON_SPRITE_MOUSE_OUT;
         }

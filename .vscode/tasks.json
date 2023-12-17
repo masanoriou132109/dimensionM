@@ -26,9 +26,11 @@
                 "main.cpp",
                 "entity.cpp",
                 "solid.cpp",
-                "player.cpp",
+                //"player.cpp",
                 "weapon.cpp",
-                "mob.cpp"
+                "mob.cpp",
+                "fodder.cpp",
+                "button.cpp"
             ],
             "options": {
                 "cwd": "${fileDirname}"
