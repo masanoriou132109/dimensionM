@@ -1,0 +1,58 @@
+# Project: SDL
+# Makefile created by Dev-C++ 5.11
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = background.o button.o entity.o fodder.o main.o mob.o solid.o weapon.o text.o vector.o Untitled1.o
+LINKOBJ  = background.o button.o entity.o fodder.o main.o mob.o solid.o weapon.o text.o vector.o Untitled1.o
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -L"SDL2-2.28.5/x86_64-w64-mingw32/lib" -L"SDL_bgi-3.0.0/bin/Mingw64" -L"SDL2_image-2.6.3/x86_64-w64-mingw32/lib" -L"SDL2_mixer-2.6.3/x86_64-w64-mingw32/lib" -L"SDL2_ttf-2.20.2/x86_64-w64-mingw32/lib" -lmingw32 -L/mingw64/bin -lSDL_bgi -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lSDL2main -lSDL2
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"SDL2-2.28.5/x86_64-w64-mingw32/include/SDL2" -I"SDL2_image-2.6.3/x86_64-w64-mingw32/include/SDL2" -I"SDL_bgi-3.0.0/src" -I"SDL2_mixer-2.6.3/x86_64-w64-mingw32/include/SDL2" -I"SDL2_image-2.6.3/x86_64-w64-mingw32/include/SDL2" -I"SDL2_ttf-2.20.2/x86_64-w64-mingw32/include/SDL2"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++" -I"SDL2-2.28.5/x86_64-w64-mingw32/include/SDL2" -I"SDL2_image-2.6.3/x86_64-w64-mingw32/include/SDL2" -I"SDL_bgi-3.0.0/src" -I"SDL2_mixer-2.6.3/x86_64-w64-mingw32/include/SDL2" -I"SDL2_image-2.6.3/x86_64-w64-mingw32/include/SDL2" -I"SDL2_ttf-2.20.2/x86_64-w64-mingw32/include/SDL2"
+BIN      = SDL.exe
+CXXFLAGS = $(CXXINCS) -std=c++11
+CFLAGS   = $(INCS) -std=c++11
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+background.o: background.cpp
+	$(CPP) -c background.cpp -o background.o $(CXXFLAGS)
+
+button.o: button.cpp
+	$(CPP) -c button.cpp -o button.o $(CXXFLAGS)
+
+entity.o: entity.cpp
+	$(CPP) -c entity.cpp -o entity.o $(CXXFLAGS)
+
+fodder.o: fodder.cpp
+	$(CPP) -c fodder.cpp -o fodder.o $(CXXFLAGS)
+
+main.o: main.cpp
+	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
+
+mob.o: mob.cpp
+	$(CPP) -c mob.cpp -o mob.o $(CXXFLAGS)
+
+solid.o: solid.cpp
+	$(CPP) -c solid.cpp -o solid.o $(CXXFLAGS)
+
+weapon.o: weapon.cpp
+	$(CPP) -c weapon.cpp -o weapon.o $(CXXFLAGS)
+
+text.o: text.cpp
+	$(CPP) -c text.cpp -o text.o $(CXXFLAGS)
+
+vector.o: vector.cpp
+	$(CPP) -c vector.cpp -o vector.o $(CXXFLAGS)
+
+Untitled1.o: Untitled1.cpp
+	$(CPP) -c Untitled1.cpp -o Untitled1.o $(CXXFLAGS)

@@ -1,29 +1,23 @@
 
-#ifndef BACKGROUND_H
-#define BACKGROUND_H
-#include "entity.hpp"
-#include "button.hpp"
-#include "solid.hpp"
-#include "SDL_mixer.h"
+#include <SDL.h>
+#include <SDL_image.h>
 #include <iostream>
-#include <vector>
-extern const int SCREEN_WIDTH;
-extern const int SCREEN_HEIGHT;
-class Background : public Entity
+#include <string>
+
+class Background
 {
-	friend class Mob; // 要讓Mob及以下都可以偵測碰撞他的Solids
-	
-	protected:
-		int solid_num;
-		std::vector<Solid*> solids={};
-		Mix_Music* music;
-			
-	public:
-		Background( SDL_Renderer* , std::string , 
-			int , int *, int *, int*, int*, const char** , 
-			Mix_Music* );
-		void display();
+  public:
+    Background(std::string title, int p_w, int p_h);
+    ~Background();
+    void loadTexture(std::string path);
+    void cleanUP();
+    void clear();
+    void display();
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    SDL_Texture *texture_;
+
+  private:
 };
 
-#endif 
 
