@@ -48,7 +48,8 @@ int main(int argc, char* args[])
             printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
         }
     }
-
+	
+	SDL_SetRenderDrawBlendMode(g_renderer,SDL_BLENDMODE_BLEND); 
     SDL_Event e;
     const Uint8 *key_state = SDL_GetKeyboardState(NULL);
     bool quit = 0;
@@ -65,11 +66,18 @@ int main(int argc, char* args[])
     // Fodder fd1(g_renderer, POLY, 30, 30, 100, 100);
     std::vector<Fodder *> fods;
     // fods.push_back(&fd1);
-    fods.push_back(new Fodder(g_renderer, EXPO, 500, 40, 100, 60));
+    fods.push_back(new Fodder(g_renderer, EXPO, 500, 40, 200, 77));
+    fods.push_back(new Fodder(g_renderer, EXPO, 1000, 40, 300, 150));
+    
     // fods.push_back(new Fodder(g_renderer, LOGA, 500, 300, 100, 50));
     std::vector<Weapon *> wps;
     Mob mb1(g_renderer, "background.png", 0, 0, 1280, 720, &e, 5);
     wps.push_back(new Weapon(g_renderer, 600, 400, DE_FOURIER));
+    wps.push_back(new Weapon(g_renderer, 500, 400, INTEGRATION));
+    wps.push_back(new Weapon(g_renderer, 400, 400, DIFFERENTIATE));
+    wps.push_back(new Weapon(g_renderer, 700, 100, LOGARITHM));
+    wps.push_back(new Weapon(g_renderer, 800, 100, TAYLOR_SERIES));
+    wps.push_back(new Weapon(g_renderer, 900, 100, LAPLACE_TRANS));
 
     vec dd;dd.x=200;dd.y=400;
     circle a(50,dd);

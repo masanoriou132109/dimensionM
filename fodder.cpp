@@ -169,7 +169,10 @@ void Fodder::display(Player &ply, std::vector<Solid *> obst)
                 // con_ = POLY; // 變成多項式
                 break;
             case DE_FOURIER:
-                hp_ *= 0.16;
+            	if(ply.animation_count == 0)
+            	{
+            	    hp_ *= 0.16;
+				}
                 // con_ = TRIG; // 變成三角
                 break;
             case LAPLACE_TRANS:
@@ -183,10 +186,13 @@ void Fodder::display(Player &ply, std::vector<Solid *> obst)
         default:
             break;
         }
-        isHit = true;
-        ply.shooting = NONE;             // 一打到就重設玩家（讓子彈消失）
-        ply.isShooting = false;          // 一打到就重設
-        ply.bullet = {2000, 2000, 0, 0}; // 一打到就重設
+        isHit = true;           // 一打到就重設玩家（讓子彈消失）
+        if(ply.animation_count == 0)
+        {
+        	ply.animation_count =1;
+		}
+        collider = {2000, 2000 , (0), int(0)};
+      //  ply.bullet = {2000, 2000, 0, 0}; // 一打到就重設
         std::cerr << "now hp=" << hp_ << '\n';
     }
 
@@ -469,7 +475,27 @@ void Player::handle_event(const Uint8 *p_keystate, SDL_Event *e)
             }
         }
     }
-
+    if (p_keystate[SDL_SCANCODE_M] && !isShooting)
+    {
+        for (auto i : weapon_)
+        {
+            if (i == LOGARITHM)
+            {
+                shooting = LOGARITHM;
+                isShooting = true;
+                bullet = {on_window_.x, on_window_.y, 100, 50};
+                if (face == LEFT)
+                {
+                    bullet_dir = {-4, 0};
+                }
+                else
+                {
+                    bullet_dir = {4, 0};
+                }
+                break;
+            }
+        }
+    }
     if (hasSprite)
     {
         sprite++;
@@ -619,7 +645,7 @@ void Player::display()
 
             on_window_ = {int(x_), int(y_), int(h_), int(w_)};
 
-            if (face == RIGHT)
+            if (face == LEFT )
             {
                 switch (sprite / 5)
                 {
@@ -664,34 +690,232 @@ void Player::display()
 
         if (isShooting)
         {
-            bullet.x += bullet_dir.x * 3;
-            bullet.y += bullet_dir.y * 3;
-            switch (shooting)
+			switch (shooting)
             {
-            case DIFFERENTIATE:
-                SDL_RenderCopy(renderer_, atk1, NULL, &bullet);
-                break;
-            case INTEGRATION:
-                SDL_RenderCopy(renderer_, atk2, NULL, &bullet);
-                break;
-            case DE_FOURIER:
-                SDL_RenderCopy(renderer_, atk3, NULL, &bullet);
-                break;
-            case TAYLOR_SERIES:
-                SDL_RenderCopy(renderer_, atk4, NULL, &bullet);
-                break;
-            case LAPLACE_TRANS:
-                SDL_RenderCopy(renderer_, atk5, NULL, &bullet);
-                break;
-            default:
-                break;
-            }
-
-            if (bullet.x < 0 || bullet.x > 1280 || bullet.y > 720 || bullet.y < 0)
-            {
-                isShooting = false;
-                shooting = NONE;
-                bullet = {int(x_), int(y_), 0, 0};
+		        case DIFFERENTIATE:
+		        	   	if(animation_count == 0)
+		        	{
+			        	bullet.x += bullet_dir.x * 3;
+			            bullet.y += bullet_dir.y * 3;
+			            if(bullet.x < 0 || bullet.x > 1280 || bullet.y > 720 || bullet.y < 0)
+			            {
+			            	animation_count = 1;
+			            	collider = {2000, 2000 , int(h_), int(w_)};
+						}
+					}
+					else
+					{
+						bullet.x -= 7;
+						bullet.y -= 5;
+						bullet.w += 5;
+						bullet.h += 5;
+						animation_count ++;
+						if(animation_count>10)
+						{
+							SDL_SetTextureAlphaMod( atk3, 0xff );
+							animation_count = 0;
+							isShooting = false;
+							shooting = NONE;
+							bullet = {int(x_), int(y_),0,0};
+						}
+					}
+		        	SDL_SetTextureAlphaMod( atk1, 0xff-animation_count*20 );
+		            SDL_RenderCopy(renderer_, atk1, NULL, &bullet);
+		            break;
+		        case INTEGRATION:
+		        	   	if(animation_count == 0)
+		        	{
+			        	bullet.x += bullet_dir.x * 3;
+			            bullet.y += bullet_dir.y * 3;
+			            if(bullet.x < 0 || bullet.x > 1280 || bullet.y > 720 || bullet.y < 0)
+			            {
+			            	animation_count = 1;
+			            	collider = {2000, 2000 , int(h_), int(w_)};
+						}
+					}
+					else
+					{
+						bullet.x -= 7;
+						bullet.y -= 5;
+						bullet.w += 5;
+						bullet.h += 5;
+						animation_count ++;
+						if(animation_count>10)
+						{
+							SDL_SetTextureAlphaMod( atk3, 0xff );
+							animation_count = 0;
+							isShooting = false;
+							shooting = NONE;
+							bullet = {int(x_), int(y_),0,0};
+						}
+					}
+		        	SDL_SetTextureAlphaMod( atk2, 0xff-animation_count*20 );
+		            SDL_RenderCopy(renderer_, atk2, NULL, &bullet);
+		            break;
+		        case DE_FOURIER:
+				       	if(animation_count == 0)
+		        	{
+			        	bullet.x += bullet_dir.x * 3;
+			            bullet.y += bullet_dir.y * 3;
+			            if(bullet.x < 0 || bullet.x > 1280 || bullet.y > 720 || bullet.y < 0)
+			            {
+			            	animation_count = 1;
+			            	collider = {2000, 2000 , int(h_), int(w_)};
+						}
+					}
+					else
+					{
+						bullet.x -= 7;
+						bullet.y -= 5;
+						bullet.w += 5;
+						bullet.h += 5;
+						animation_count ++;
+						if(animation_count>10)
+						{
+							SDL_SetTextureAlphaMod( atk3, 0xff );
+							animation_count = 0;
+							isShooting = false;
+							shooting = NONE;
+							bullet = {int(x_), int(y_),0,0};
+						}
+					}
+		        	SDL_SetTextureAlphaMod( atk3, 0xff-animation_count*20 );
+		            SDL_RenderCopy(renderer_, atk3, NULL, &bullet);
+		            break;
+		        case TAYLOR_SERIES:
+		        	{
+		        		if(animation_count == 0)
+		        		{
+		        			if(face == LEFT )
+		        			{
+		        				animation_count =-1;
+							}
+							else if (face == RIGHT )
+							{
+								animation_count =1;
+							}
+						}
+						else if(animation_count > 0 )
+						{
+							SDL_Rect ani_rect = {x_+w_/2-32*(animation_count/16)*(16-animation_count),y_+h_/2-80,32*(animation_count/16)*(16-animation_count)+animation_count*32,160}; //let���ߦb���Z����
+							SDL_Rect source_rect = {0,0,32*(animation_count/16)*(16-animation_count)+animation_count*32,1024};
+					        SDL_RenderCopy(renderer_, atk5, &source_rect, &ani_rect);
+					        animation_count ++;
+					        if(animation_count > 32)
+			        		{
+			        			SDL_SetTextureAlphaMod( atk3, 0xff );
+								animation_count = 0;
+								isShooting = false;
+								shooting = NONE;
+								bullet = {int(x_), int(y_),0,0};
+							}
+				            break;
+						}
+						else if(animation_count<0) 
+						{
+							
+							SDL_Rect ani_rect = {x_+w_/2+animation_count*32,y_+h_/2,-animation_count*32,160}; //let���ߦb���Z����
+							SDL_Rect source_rect = {0,0,-animation_count*32,1024};
+					        SDL_RenderCopy(renderer_, atk5, &source_rect, &ani_rect); 
+					        animation_count --;
+					        if(animation_count < -32)
+			        		{
+			        			SDL_SetTextureAlphaMod( atk3, 0xff );
+								animation_count = 0;
+								isShooting = false;
+								shooting = NONE;
+								bullet = {int(x_), int(y_),0,0};
+							}
+				            break;
+						}
+		        		
+					}
+					
+		        	/*   	if(animation_count == 0)
+		        	{
+			        	bullet.x += bullet_dir.x * 3;
+			            bullet.y += bullet_dir.y * 3;
+			            if(bullet.x < 0 || bullet.x > 1280 || bullet.y > 720 || bullet.y < 0)
+			            {
+			            	animation_count = 1;
+			            	collider = {2000, 2000 , int(h_), int(w_)};
+						}
+					}
+					else
+					{
+						bullet.x -= 7;
+						bullet.y -= 5;
+						bullet.w += 5;
+						bullet.h += 5;
+						animation_count ++;
+						if(animation_count>10)
+						{
+							SDL_SetTextureAlphaMod( atk3, 0xff );
+							animation_count = 0;
+							isShooting = false;
+							shooting = NONE;
+							bullet = {int(x_), int(y_),0,0};
+						}
+					}*/
+		        	SDL_SetTextureAlphaMod( atk4, 0xff-animation_count*20 );
+		            SDL_RenderCopy(renderer_, atk4, NULL, &bullet);
+		            break;
+		        case LAPLACE_TRANS:
+		        	{
+		        		animation_count ++;
+						if(animation_count>50)
+						{
+							SDL_SetTextureAlphaMod( atk3, 0xff );
+							animation_count = 0;
+							isShooting = false;
+							shooting = NONE;
+							bullet = {int(x_), int(y_),0,0};
+						}
+						bullet.x = x_+w_/2;
+						bullet.y = y_+h_/2;
+						SDL_Rect ani_rect = {x_+w_/2-5*animation_count,y_+h_/2-animation_count*5,10*animation_count,10*animation_count}; //let���ߦb���Z����
+						SDL_SetRenderDrawColor( renderer_, 0xff-animation_count,200+animation_count,0xff,0xff-animation_count/3);
+			        	SDL_SetTextureAlphaMod( atk5, 0xff-animation_count*3 );
+			        	SDL_RenderFillRect( renderer_, &ani_rect);
+			        	
+			            SDL_RenderCopy(renderer_, atk5, NULL, &bullet); 
+			            SDL_SetRenderDrawColor( renderer_, 0xff ,0xff ,0xff ,200+animation_count); 
+			            break;
+					}
+					
+		        case LOGARITHM:
+		        	if(animation_count == 0)
+		        	{
+			        	bullet.x += bullet_dir.x * 3;
+			            bullet.y += bullet_dir.y * 3;
+			            if(bullet.x < 0 || bullet.x > 1280 || bullet.y > 720 || bullet.y < 0)
+			            {
+			            	animation_count = 1;
+			            	collider = {2000, 2000 , int(h_), int(w_)};
+						}
+					}
+					else
+					{
+						bullet.x -= 7;
+						bullet.y -= 5;
+						bullet.w += 5;
+						bullet.h += 5;
+						animation_count ++;
+						if(animation_count>10)
+						{
+							SDL_SetTextureAlphaMod( atk3, 0xff );
+							animation_count = 0;
+							isShooting = false;
+							shooting = NONE;
+							bullet = {int(x_), int(y_),0,0};
+						}
+					}
+		        	SDL_SetTextureAlphaMod( atk6, 0xff-animation_count*20 );
+		            SDL_RenderCopy(renderer_, atk6, NULL, &bullet);
+		            break;
+		        	
+		        default:
+		            break;
             }
         }
         else

@@ -4,6 +4,8 @@
 #include "mob.hpp"
 #include "vector.hpp"
 #include "weapon.hpp"
+#include <iostream>
+
 
 enum math_kind
 {
@@ -37,22 +39,25 @@ class Fodder : public Mob
 
 class Player : public Mob
 {
+	friend class Fodder;
   private:
     std::vector<Math> weapon_;
-
+	
+	int animation_count;
     float hp_;
     Vector direction;
 
-    SDL_Texture *atk1 = IMG_LoadTexture(renderer_, "C.png");
-    SDL_Texture *atk2 = IMG_LoadTexture(renderer_, "L.png");
-    SDL_Texture *atk3 = IMG_LoadTexture(renderer_, "E.png");
-    SDL_Texture *atk4 = IMG_LoadTexture(renderer_, "A.png");
-    SDL_Texture *atk5 = IMG_LoadTexture(renderer_, "T.png");
+    SDL_Texture *atk1 = IMG_LoadTexture(renderer_, "diff.png");
+    SDL_Texture *atk2 = IMG_LoadTexture(renderer_, "inte.png");
+    SDL_Texture *atk3 = IMG_LoadTexture(renderer_, "four.png");
+    SDL_Texture *atk4 = IMG_LoadTexture(renderer_, "tayl.png");
+    SDL_Texture *atk5 = IMG_LoadTexture(renderer_, "tridra.png");
+    SDL_Texture *atk6 = IMG_LoadTexture(renderer_, "loga.png");
 
   public:
     Player(SDL_Renderer *global_renderer, std::string image_path, int p_x, int p_y, int p_w, int p_h,
            SDL_Event *global_event, float p_speed, float p_hp)
-        : Mob(global_renderer, image_path, p_x, p_y, p_w, p_h, global_event, p_speed), hp_(p_hp){};
+        : Mob(global_renderer, image_path, p_x, p_y, p_w, p_h, global_event, p_speed), hp_(p_hp), animation_count(0){};
 
     void handle_event(const Uint8 *p_keystate, SDL_Event *e);
     void display();
