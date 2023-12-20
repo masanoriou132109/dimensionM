@@ -1,8 +1,8 @@
 #include "fodder.hpp"
 
 
-Fodder::Fodder(SDL_Renderer *global_renderer, math_kind p_math, int p_x, int p_y, int p_w, int p_h)
-    : Mob(global_renderer, " ", float(p_x), float(p_y), float(p_w), float(p_h), NULL, 0), con_(p_math)
+Fodder::Fodder(SDL_Renderer *global_renderer, math_kind p_math, int p_x, int p_y, int p_w, int p_h, Polygon p_poly)
+    : Mob(global_renderer, " ", float(p_x), float(p_y), float(p_w), float(p_h), NULL, 0), con_(p_math), _poly(p_poly)
 {
 
     hp_ = (float(p_math) + 1) * 100;
