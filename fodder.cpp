@@ -1,8 +1,8 @@
 #include "fodder.hpp"
 
 
-Fodder::Fodder(SDL_Renderer *global_renderer, math_kind p_math, int p_x, int p_y, int p_w, int p_h)
-    : Mob(global_renderer, " ", float(p_x), float(p_y), float(p_w), float(p_h), NULL, 0), con_(p_math)
+Fodder::Fodder(SDL_Renderer *global_renderer, math_kind p_math, int p_x, int p_y, int p_w, int p_h, Polygon p_poly)
+    : Mob(global_renderer, " ", float(p_x), float(p_y), float(p_w), float(p_h), NULL, 0), con_(p_math), _poly(p_poly)
 {
 
     hp_ = (float(p_math) + 1) * 100;
@@ -32,6 +32,7 @@ Fodder::Fodder(SDL_Renderer *global_renderer, math_kind p_math, int p_x, int p_y
         break;
     }
 }
+
 void Fodder::display(Player &ply, std::vector<Solid *> obst)
 { 
 
@@ -605,13 +606,13 @@ void Player::display()
             {
                 x_ = 0;
             }
-            if (y_ + h_ > SCREEN_HEIGHT-50)
+            if (y_ + h_ > SCREEN_HEIGHT)
             {
-                y_ = SCREEN_HEIGHT-50 - w_;
+                y_ = SCREEN_HEIGHT - w_;
             }
-            if (y_ < 50)
+            if (y_ < 0)
             {
-                y_ = 50;
+                y_ = 0;
             }
 
             w_ = abs(0.8 * y_);

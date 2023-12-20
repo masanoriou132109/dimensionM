@@ -18,7 +18,7 @@ public:
 public:
     Polygon() {}
 
-    Polygon(vec *a, int b) {
+    Polygon(vec *a, int b) {//a是頂點 b是點數 
         vertex = b;
         for (int i = 0; i < vertex; i++) {
             point[i] = a[i];
@@ -89,23 +89,20 @@ public:
 
         return true;
     }
-    bool containsPoint(const vec &po) const 
-	{
-	    bool result = false;
-	    int j = vertex - 1;
-	    for (int i = 0; i < vertex; i++) {
-	        if ((point[i].y < po.y && point[j].y >= po.y) || 
-	            (point[j].y < po.y && point[i].y >= po.y)) 
-			{
-	            if (point[i].x + (po.y - point[i].y) / (point[j].y - point[i].y) * (point[j].x - point[i].x) < po.x) 
-				{
-	                result = !result;
-	            }
-	        }
-	        j = i;
-	    }
-	    return result;
-	}
+    bool containsPoint(const vec &po) const {
+    bool result = false;
+    int j = vertex - 1;
+    for (int i = 0; i < vertex; i++) {
+        if ((point[i].y < po.y && point[j].y >= po.y) || 
+            (point[j].y < po.y && point[i].y >= po.y)) {
+            if (point[i].x + (po.y - point[i].y) / (point[j].y - point[i].y) * (point[j].x - point[i].x) < po.x) {
+                result = !result;
+            }
+        }
+        j = i;
+    }
+    return result;
+}
 };
 
 class circle
@@ -200,10 +197,10 @@ bool collide(circle &cir, Polygon &poly) { ///這是最核心的SAT 圓形撞多邊形
     }
     return true;
 }
-void drawPolygon(SDL_Renderer *renderer, Polygon *polygon) {  //這坨也不用 
-    for (int i = 0; i < polygon->vertex; i++) {
-        int next = (i + 1 == polygon->vertex) ? 0 : i + 1;
-        SDL_RenderDrawLine(renderer, polygon->point[i].x, polygon->point[i].y, polygon->point[next].x, polygon->point[next].y);
+void drawPolygon(SDL_Renderer *renderer, Polygon polygon) {  //這坨也不用 
+    for (int i = 0; i < polygon.vertex; i++) {
+        int next = (i + 1 == polygon.vertex) ? 0 : i + 1;
+        SDL_RenderDrawLine(renderer, polygon.point[i].x, polygon.point[i].y, polygon.point[next].x, polygon.point[next].y);
     }
 }
 void drawCircle(SDL_Renderer* renderer, const circle& c) {

@@ -9,7 +9,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include"colli.hpp"
+
 
 const int SCREEN_FPS = 60;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
@@ -56,7 +56,7 @@ int main(int argc, char* args[])
     // 宣告區
     // Entity ent1(g_renderer, "../images/brown2.png", 100, 100, 100, 100);
     // Solid sol1(g_renderer, "../images/anime.png", 200, 200, 200, 200, &e);
-	
+
     std::vector<Solid *> obst;
     obst.push_back(new Solid(g_renderer, "background.png.png", 0, 0, 1280, 720, &e));
     Player ply1(g_renderer, "1.png", 30, 300, 100, 100, &e, 5,
@@ -65,7 +65,11 @@ int main(int argc, char* args[])
     // Fodder fd1(g_renderer, POLY, 30, 30, 100, 100);
     std::vector<Fodder *> fods;
     // fods.push_back(&fd1);
-    fods.push_back(new Fodder(g_renderer, EXPO, 500, 40, 100, 60));
+    //�o�Ӽg�k�W�d�C�v
+    vec ff[4]={{100,100},{200,200},{100,200},{200,100}};
+	Polygon g(ff,4); 
+	Fodder* aa = new Fodder(g_renderer, EXPO, 500, 40, 100, 60,g); 
+    fods.push_back(aa);
     // fods.push_back(new Fodder(g_renderer, LOGA, 500, 300, 100, 50));
     std::vector<Weapon *> wps;
     Mob mb1(g_renderer, "background.png", 0, 0, 1280, 720, &e, 5);
@@ -88,16 +92,10 @@ int main(int argc, char* args[])
         }
 
         key_state = SDL_GetKeyboardState(NULL);
-
-        
+        SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(g_renderer);
         Uint64 end = SDL_GetPerformanceCounter();
-                SDL_SetRenderDrawColor(g_renderer, 0, 0, 0, 0xFF);
-		SDL_Rect upborder = {0,0,SCREEN_WIDTH,50};
-		SDL_Rect downborder = {0,SCREEN_HEIGHT-50,SCREEN_WIDTH,50};
-        SDL_RenderFillRect(g_renderer,&upborder);
-        SDL_RenderFillRect(g_renderer,&downborder);
-                SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
         // 寫程式區
         for (auto i : obst)
         {
@@ -111,18 +109,19 @@ int main(int argc, char* args[])
 		a.center.y=ply1.get_y()+50;
 		a.radius=ply1.get_w()*0.4; 
 		
-		/*SDL_SetRenderDrawColor(g_renderer, 0, 0, 255, 255);
-        drawPolygon(g_renderer, &quad);
-        
+		SDL_SetRenderDrawColor(g_renderer, 0, 0, 255, 255);
+        drawPolygon(g_renderer, quad);
+        SDL_SetRenderDrawColor(g_renderer, 255, 0, 0, 255);
+        drawPolygon(g_renderer,aa->_poly);
         SDL_SetRenderDrawColor(g_renderer, 0, 255, 0, 255);
         drawCircle(g_renderer,a);
-         */
+         
         ply1.detect(wps, fods, obst); // 這會遍歷所有上述三者的vector檢查有無碰撞
         
-	/*	if(collide(a, quad) )
+		if(collide(a, quad) )
             {
 			cout<<"haha"<<endl;}
-      */  
+        
         for (auto i : fods)
         {
             i->display(ply1, obst);

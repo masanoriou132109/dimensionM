@@ -4,7 +4,7 @@
 #include "mob.hpp"
 #include "vector.hpp"
 #include "weapon.hpp"
-
+#include"colli.hpp"
 enum math_kind
 {
     CONST = 0,
@@ -18,18 +18,20 @@ enum math_kind
 
 class Player;
 
-class Fodder : public Mob
+class Fodder : public Mob,public Polygon
 {
   public:
-    Fodder(SDL_Renderer *global_renderer, math_kind p_math, int p_x, int p_y, int p_w, int p_h);
+    Fodder(SDL_Renderer *global_renderer, math_kind p_math, int p_x, int p_y, int p_w, int p_h, Polygon p_poly);
     int atk_;
     int hp_;
     math_kind con_;
+    Polygon _poly;
 
     float vel_x;
     float vel_y;
     float speed_ = 1;   
     bool isHit = false; 
+
     void display(Player &ply, std::vector<Solid *> obst); 
 };
 
