@@ -2,8 +2,8 @@
 
 // 小怪部分
 
-Fodder::Fodder(SDL_Renderer *global_renderer, math_kind p_math, int p_x, int p_y, int p_w, int p_h)
-    : Mob(global_renderer, " ", float(p_x), float(p_y), float(p_w), float(p_h), NULL, 0), con_(p_math)
+Fodder::Fodder(SDL_Renderer *global_renderer, math_kind p_math, int p_x, int p_y, int p_w, int p_h, Polygon p_shape)
+    : Mob(global_renderer, " ", float(p_x), float(p_y), float(p_w), float(p_h), NULL, 0, p_shape), con_(p_math)
 {
     // 記得改參數
     hp_ = (float(p_math) + 1) * 100;
@@ -206,11 +206,21 @@ void Fodder::display(Player &ply, std::vector<Solid *> obst)
                 { // 如果朝向障礙物就慢一點
                     x_ += direction.unit_x * 0.3 * speed_;
                     y_ += direction.unit_y * 0.3 * speed_;
+                    for (int i = 0; i < shape.vertex; i++)
+                    {
+                        shape.point[i].x += direction.unit_x * 0.3 * speed_;
+                        shape.point[i].y += direction.unit_y * 0.3 * speed_;
+                    }
                 }
                 else
                 {
                     x_ += direction.unit_x * speed_;
                     y_ += direction.unit_y * speed_;
+                    for (int i = 0; i < shape.vertex; i++)
+                    {
+                        shape.point[i].x += direction.unit_x * speed_;
+                        shape.point[i].y += direction.unit_y * speed_;
+                    }
                 }
             }
         }
@@ -226,6 +236,11 @@ void Fodder::display(Player &ply, std::vector<Solid *> obst)
                     {
                         x_ += direction.unit_x * 0.3 * speed_;
                         y_ += direction.unit_y * 0.3 * speed_;
+                        for (int i = 0; i < shape.vertex; i++)
+                        {
+                            shape.point[i].x += direction.unit_x * 0.3 * speed_;
+                            shape.point[i].y += direction.unit_y * 0.3 * speed_;
+                        }
                     }
                 }
                 else
@@ -234,6 +249,11 @@ void Fodder::display(Player &ply, std::vector<Solid *> obst)
                     {
                         x_ += direction.unit_x * speed_;
                         y_ += direction.unit_y * speed_;
+                        for (int i = 0; i < shape.vertex; i++)
+                        {
+                            shape.point[i].x += direction.unit_x * speed_;
+                            shape.point[i].y += direction.unit_y * speed_;
+                        }
                     }
                 }
             }
@@ -724,16 +744,12 @@ void Player::detect(std::vector<Weapon *> wps, std::vector<Fodder *> fods, std::
 
     for (auto i : fods)
     {
-        if (collider.x < (i->collider.x + i->collider.w) && (collider.x + collider.w) > i->collider.x &&
-            collider.y < (i->collider.y + i->collider.h) && (collider.y + collider.h) > i->collider.y)
+        if (collide(cir_, i->shape))
         {
-            hp_ -= i->atk_;
+            x_ += 2 * i->vel_x;
+            y_ += 2 * i->vel_y;
         }
-
-        if (!i->collision(bullet))
-        {
-            i->isHit = false;
-        }
+        hp_ -= i->atk_;
     }
 
     for (auto i : obst)
@@ -741,8 +757,19 @@ void Player::detect(std::vector<Weapon *> wps, std::vector<Fodder *> fods, std::
         if (collider.x < (i->collider.x + i->collider.w) && (collider.x + collider.w) > i->collider.x &&
             collider.y < (i->collider.y + i->collider.h) && (collider.y + collider.h) > i->collider.y)
         {
-            x_ -= vel_x;
-            y_ -= vel_y;
+            Vector v(float(i->collider.x + (i->collider.w / 2) - (x_ + w_ / 2)),
+                     float(i->collider.y + (i->collider.h / 2) - (y_ + h_ / 2)));
+            std::cerr << "dimen = " << dimension_ << '\n';
+            std::cerr << "velx = " << v.x << ", vely = " << v.y << '\n';
+            if (dimension_ == 2)
+            {
+                x_ -= v.unit_x * speed_;
+                y_ -= v.unit_y * speed_;
+            }
+            else
+            {
+                isJumping = false;
+            }
         }
     }
 }

@@ -461,17 +461,17 @@ void Player::detect(std::vector<Weapon *> wps, std::vector<Fodder *> fods, std::
 
     for (auto i : fods)
     {
-        if (collider.x < (i->collider.x + i->collider.w) && (collider.x + collider.w) > i->collider.x &&
-            collider.y < (i->collider.y + i->collider.h) && (collider.y + collider.h) > i->collider.y)
+        if (collide(cir_, i->shape))
         {
-            hp_ -= i->atk_;
+            x_ += 2 * i->vel_x;
+            y_ += 2 * i->vel_y;
         }
+        hp_ -= i->atk_;
     }
 
     for (auto i : obst)
     {
-        if (collider.x < (i->collider.x + i->collider.w) && (collider.x + collider.w) > i->collider.x &&
-            collider.y < (i->collider.y + i->collider.h) && (collider.y + collider.h) > i->collider.y)
+        if (collide(cir_, i->shape))
         {
             x_ -= vel_x;
             y_ -= vel_y;

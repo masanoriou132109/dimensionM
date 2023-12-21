@@ -1,5 +1,6 @@
 #include "button.hpp"
 // #include "player.hpp"
+// include "colli.hpp"
 #include "fodder.hpp"
 #include "text.hpp"
 #include "weapon.hpp"
@@ -46,28 +47,37 @@ int main()
             printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
         }
     }
+    vec v[4] = {{30, 30}, {30, 40}, {40, 40}, {40, 30}};
 
     SDL_Event e;
     const Uint8 *key_state = SDL_GetKeyboardState(NULL);
     bool quit = 0;
+
+    Polygon p(v, 4);
 
     // 宣告區
     // Entity ent1(g_renderer, "../images/brown2.png", 100, 100, 100, 100);
     // Solid sol1(g_renderer, "../images/anime.png", 200, 200, 200, 200, &e);
 
     std::vector<Solid *> obst;
-    obst.push_back(new Solid(g_renderer, "../images/brown2.png", 300, 300, 100, 100, &e));
+    obst.push_back(new Solid(g_renderer, "../images/brown2.png", 200, 300, 60, 30, &e, p));
     Player ply1(g_renderer, "../images/brown2.png", 30, 300, 100, 100, &e, 5,
                 40); // 不知為何玩家的第一張圖（靜止）傳不進去，請幫我處理一下
     ply1.set_source("../images/2.png", "../images/3.png", "../images/4.png");
     // Fodder fd1(g_renderer, POLY, 30, 30, 100, 100);
     std::vector<Fodder *> fods;
     // fods.push_back(&fd1);
-    fods.push_back(new Fodder(g_renderer, EXPO, 500, 40, 100, 60));
+    /*
+        vec ff[4] = {{100, 100}, {100, 200}, {200, 200}, {200, 100}};
+        Polygon g(ff, 4);
+        Fodder *aa = new Fodder(g_renderer, EXPO, 500, 40, 100, 60, g);
+        fods.push_back(aa);*/
+
     // fods.push_back(new Fodder(g_renderer, LOGA, 500, 300, 100, 50));
     std::vector<Weapon *> wps;
-    Mob mb1(g_renderer, "../images/anime.png", 400, 300, 200, 100, &e, 5);
+    // Mob mb1(g_renderer, "../images/anime.png", 400, 300, 200, 100, &e, 5);
     wps.push_back(new Weapon(g_renderer, 600, 400, DE_FOURIER));
+    wps.push_back(new Weapon(g_renderer, 300, 100, INTEGRATION));
 
     // 宣告區
 
@@ -94,12 +104,14 @@ int main()
         // mb1.display();
         ply1.handle_event(key_state, &e);
         ply1.display();
+        SDL_SetRenderDrawColor(g_renderer, 255, 0, 0, 255);
+        /*drawPolygon(g_renderer, aa->_poly);*/
         ply1.detect(wps, fods, obst); // 這會遍歷所有上述三者的vector檢查有無碰撞
 
         for (auto i : fods)
         {
             i->display(ply1, obst);
-                }
+        }
 
         for (auto i : wps)
         {

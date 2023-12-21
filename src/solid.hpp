@@ -1,5 +1,6 @@
 #ifndef SOLID_H
 #define SOLID_H
+#include "colli.hpp"
 #include "entity.hpp"
 #include "vector.hpp"
 
@@ -16,10 +17,12 @@ class Solid : public Entity
   public:
     Solid(){};
     Solid(SDL_Renderer *global_renderer, std::string image_path, int p_x, int p_y, int p_w, int p_h,
-          SDL_Event *global_event) // 需多傳入一個global事件的指標（or&)
-        : Entity(global_renderer, image_path, p_x, p_y, p_w, p_h), e(global_event), pos(float(p_x), float(p_y)){};
+          SDL_Event *global_event, Polygon p_shape) // 需多傳入一個global事件的指標（or&)
+        : Entity(global_renderer, image_path, p_x, p_y, p_w, p_h), e(global_event), pos(float(p_x), float(p_y)),
+          shape(p_shape){};
 
     SDL_Rect collider = {int(x_), int(y_), int(w_), int(h_)}; // 碰撞箱
+    Polygon shape;
 
     float delta_r = 0.1 * y_; // 薛說要的誤差值，但可能不用了
 

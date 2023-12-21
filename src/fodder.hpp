@@ -24,10 +24,11 @@ class Player;
 class Fodder : public Mob
 {
   public: // 反正小怪不重要嘛全部設成public
-    Fodder(SDL_Renderer *global_renderer, math_kind p_math, int p_x, int p_y, int p_w, int p_h);
+    Fodder(SDL_Renderer *global_renderer, math_kind p_math, int p_x, int p_y, int p_w, int p_h, Polygon p_shape);
     int atk_;
     int hp_;
     math_kind con_;
+    Polygon shape;
 
     float vel_x;
     float vel_y;
@@ -56,7 +57,8 @@ class Player : public Mob
   public:
     Player(SDL_Renderer *global_renderer, std::string image_path, int p_x, int p_y, int p_w, int p_h,
            SDL_Event *global_event, float p_speed, float p_hp)
-        : Mob(global_renderer, image_path, p_x, p_y, p_w, p_h, global_event, p_speed), hp_(p_hp){};
+        : Mob(global_renderer, image_path, p_x, p_y, p_w, p_h, global_event, p_speed, {}), hp_(p_hp),
+          cir_(p_w / 2, {x_ + w_ / 2, y_ + h_ / 2}){};
 
     void handle_event(const Uint8 *p_keystate, SDL_Event *e);
     void display();
@@ -65,6 +67,7 @@ class Player : public Mob
     Vector bullet_dir;
     Math shooting;
     bool isShooting = false;
+    Circle cir_;
 };
 
 #endif // FODDER_H

@@ -30,7 +30,8 @@
                 "weapon.cpp",
                 "mob.cpp",
                 "fodder.cpp",
-                "button.cpp"
+                "button.cpp",
+                "colli.cpp"
             ],
             "options": {
                 "cwd": "${fileDirname}"

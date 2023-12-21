@@ -42,8 +42,8 @@ class Mob : public Solid
 
   public:
     Mob(SDL_Renderer *global_renderer, std::string image_path, int p_x, int p_y, int p_w, int p_h,
-        SDL_Event *global_event, int p_speed) // 需多傳入移動速率
-        : Solid(global_renderer, image_path, p_x, p_y, p_w, p_h, global_event), speed_(p_speed){};
+        SDL_Event *global_event, int p_speed, Polygon p_shape) // 需多傳入移動速率
+        : Solid(global_renderer, image_path, p_x, p_y, p_w, p_h, global_event, p_shape), speed_(p_speed){};
 
     void set_source(std::string image_path2, std::string image_path3,
                     std::string image_path4); // 設定精靈圖，不要就別丟
