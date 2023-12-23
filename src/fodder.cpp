@@ -2,14 +2,12 @@
 
 // 小怪部分
 
-Fodder::Fodder(SDL_Renderer *global_renderer, math_kind p_math, int p_x, int p_y, int p_w, int p_h, Polygon p_shape)
-    : Mob(global_renderer, " ", float(p_x), float(p_y), float(p_w), float(p_h), NULL, 0, p_shape), con_(p_math)
+Fodder::Fodder(SDL_Renderer *global_renderer, math_kind p_math, int p_x, int p_y, int p_w, int p_h)
+    : Mob(global_renderer, " ", float(p_x), float(p_y), float(p_w), float(p_h), NULL, 0), con_(p_math)
 {
     // 記得改參數
     hp_ = (float(p_math) + 1) * 100;
     atk_ = (p_math + 1) * 10;
-
-    std::cerr << "hp = " << hp_ << '\n';
 
     // 依照類型生成對應的小怪圖片
     switch (p_math)
@@ -32,14 +30,16 @@ Fodder::Fodder(SDL_Renderer *global_renderer, math_kind p_math, int p_x, int p_y
     default:
         break;
     }
+
+    bomb = IMG_LoadTexture(renderer_, "../images/bomb.png");
 }
 
 void Fodder::display(Player &ply, std::vector<Solid *> obst)
 { // 怪被打到的延遲還沒實裝，玩家被怪打的也是，請注意
 
-    if (collision(ply.bullet))
-    { // 被子彈打到時
-
+    dimension_ = ply.dimension_;
+    if (collision(ply.bullet) && !isHit)
+    {                 // 被子彈打到時
         switch (con_) // 判斷自己的性質
         {
         case CONST:
@@ -168,11 +168,11 @@ void Fodder::display(Player &ply, std::vector<Solid *> obst)
                 break;
             case TAYLOR_SERIES:
                 hp_ *= 0.46;
-                // con_ = POLY; // 變成多項式
+                con_ = POLY; // 變成多項式
                 break;
             case DE_FOURIER:
                 hp_ *= 0.16;
-                // con_ = TRIG; // 變成三角
+                con_ = TRIG; // 變成三角
                 break;
             case LAPLACE_TRANS:
                 hp_ *= 0.8;
@@ -189,7 +189,6 @@ void Fodder::display(Player &ply, std::vector<Solid *> obst)
         ply.shooting = NONE;             // 一打到就重設玩家（讓子彈消失）
         ply.isShooting = false;          // 一打到就重設
         ply.bullet = {2000, 2000, 0, 0}; // 一打到就重設
-        std::cerr << "now hp=" << hp_ << '\n';
     }
 
     if (hp_ > 0)
@@ -207,7 +206,7 @@ void Fodder::display(Player &ply, std::vector<Solid *> obst)
                     x_ += direction.unit_x * 0.3 * speed_;
                     y_ += direction.unit_y * 0.3 * speed_;
                     for (int i = 0; i < shape.vertex; i++)
-                    {
+                    { // 碰撞箱跟著走
                         shape.point[i].x += direction.unit_x * 0.3 * speed_;
                         shape.point[i].y += direction.unit_y * 0.3 * speed_;
                     }
@@ -230,9 +229,9 @@ void Fodder::display(Player &ply, std::vector<Solid *> obst)
             {
                 Vector to_obst(i->collider.x - x_, i->collider.y - y_); // 到障礙物的向量
 
-                if (to_obst.length() < 50 && direction.unit_x * to_obst.unit_x + direction.unit_y * to_obst.unit_y > 0)
-                {                                // 如果朝向障礙物就慢一點
-                    if (direction.length() > 50) // 離玩家50 pixels以上才走向玩家
+                if (to_obst.length() < 100 && direction.unit_x * to_obst.unit_x + direction.unit_y * to_obst.unit_y > 0)
+                {                                 // 如果朝向障礙物就慢一點
+                    if (direction.length() > 100) // 離玩家100 pixels以上才走向玩家
                     {
                         x_ += direction.unit_x * 0.3 * speed_;
                         y_ += direction.unit_y * 0.3 * speed_;
@@ -245,7 +244,7 @@ void Fodder::display(Player &ply, std::vector<Solid *> obst)
                 }
                 else
                 {
-                    if (direction.length() > 50)
+                    if (direction.length() > 100)
                     {
                         x_ += direction.unit_x * speed_;
                         y_ += direction.unit_y * speed_;
@@ -257,7 +256,40 @@ void Fodder::display(Player &ply, std::vector<Solid *> obst)
                     }
                 }
             }
+
+            if (!Fod_isShooting)
+            {
+                bullet = {int(x_), int(y_), 50, 50};
+                Fod_isShooting = true;
+                shoot_vel = direction;
+            }
         }
+
+        if (Fod_isShooting)
+        {
+            bullet.x += shoot_vel.unit_x;
+            bullet.y += shoot_vel.unit_y;
+
+            if (bullet.x > 1280 || bullet.x < 0 || bullet.y > 720 || bullet.y < 0)
+            {
+                Fod_isShooting = false;
+                shoot_vel = {0, 0};
+            }
+
+            if ((bullet.x < ply.collider.x + ply.collider.w) && (bullet.y < ply.collider.y + ply.collider.h) &&
+                (bullet.y > ply.collider.y) && (bullet.x > ply.collider.x))
+            {
+                ply.hp_ -= 3;
+                Fod_isShooting = false;
+                shoot_vel = {0, 0};
+            }
+        }
+        else
+        {
+            bullet = {5000, 5000, 30, 30};
+        }
+
+        SDL_RenderCopy(renderer_, bomb, NULL, &bullet);
 
         collider = {int(x_), int(y_), int(w_),
                     int(h_)}; // 更新螢幕上位置與碰撞箱（其實這兩個有點重複，要修改的話在solid裡面找）
@@ -282,18 +314,18 @@ void Player::handle_event(const Uint8 *p_keystate, SDL_Event *e)
             sprite--;
         }
 
-        if (dimension_ == 3)
+        if (dimension_ == 2)
         {
-            dimension_ = 2;
+            dimension_ = 3;
         }
         else
         {
-            dimension_ = 3;
+            dimension_ = 2;
             isJumping = true;
         }
     }
 
-    if (dimension_ == 2)
+    if (dimension_ == 3)
     {
         if (p_keystate[SDL_SCANCODE_W])
         {
@@ -350,7 +382,7 @@ void Player::handle_event(const Uint8 *p_keystate, SDL_Event *e)
             }
         }
     }
-    if (dimension_ == 3)
+    if (dimension_ == 2)
     {
         if (p_keystate[SDL_SCANCODE_W])
         {
@@ -506,7 +538,7 @@ void Player::display()
 {
     if (hp_ > 0)
     {
-        if (dimension_ == 3)
+        if (dimension_ == 2)
         {
             if (isJumping == true)
             {
@@ -579,25 +611,6 @@ void Player::display()
                 switch (sprite / 5)
                 {
                 case 0:
-                    SDL_RenderCopyEx(renderer_, texture_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
-                    break;
-                case 1:
-                    SDL_RenderCopyEx(renderer_, texture2_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
-                    break;
-                case 2:
-                    SDL_RenderCopyEx(renderer_, texture3_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
-                    break;
-                case 3:
-                    SDL_RenderCopyEx(renderer_, texture4_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
-                default:
-                    break;
-                }
-            }
-            else // face == LEFT
-            {
-                switch (sprite / 5)
-                {
-                case 0:
                     SDL_RenderCopyEx(renderer_, texture_, NULL, &on_window_, 0, NULL, SDL_FLIP_HORIZONTAL);
                     break;
                 case 1:
@@ -612,9 +625,28 @@ void Player::display()
                     break;
                 }
             }
+            else // face == LEFT
+            {
+                switch (sprite / 5)
+                {
+                case 0:
+                    SDL_RenderCopyEx(renderer_, texture_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+                    break;
+                case 1:
+                    SDL_RenderCopyEx(renderer_, texture2_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+                    break;
+                case 2:
+                    SDL_RenderCopyEx(renderer_, texture3_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+                    break;
+                case 3:
+                    SDL_RenderCopyEx(renderer_, texture4_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+                default:
+                    break;
+                }
+            }
             vel_x = 0;
         }
-        else // dimension == 2
+        else // dimension == 3
         {
             x_ += vel_x;
             y_ += vel_y;
@@ -646,25 +678,6 @@ void Player::display()
                 switch (sprite / 5)
                 {
                 case 0:
-                    SDL_RenderCopyEx(renderer_, texture_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
-                    break;
-                case 1:
-                    SDL_RenderCopyEx(renderer_, texture2_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
-                    break;
-                case 2:
-                    SDL_RenderCopyEx(renderer_, texture3_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
-                    break;
-                case 3:
-                    SDL_RenderCopyEx(renderer_, texture4_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
-                default:
-                    break;
-                }
-            }
-            else // face == LEFT
-            {
-                switch (sprite / 5)
-                {
-                case 0:
                     SDL_RenderCopyEx(renderer_, texture_, NULL, &on_window_, 0, NULL, SDL_FLIP_HORIZONTAL);
                     break;
                 case 1:
@@ -675,6 +688,25 @@ void Player::display()
                     break;
                 case 3:
                     SDL_RenderCopyEx(renderer_, texture4_, NULL, &on_window_, 0, NULL, SDL_FLIP_HORIZONTAL);
+                default:
+                    break;
+                }
+            }
+            else // face == LEFT
+            {
+                switch (sprite / 5)
+                {
+                case 0:
+                    SDL_RenderCopyEx(renderer_, texture_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+                    break;
+                case 1:
+                    SDL_RenderCopyEx(renderer_, texture2_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+                    break;
+                case 2:
+                    SDL_RenderCopyEx(renderer_, texture3_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
+                    break;
+                case 3:
+                    SDL_RenderCopyEx(renderer_, texture4_, NULL, &on_window_, 0, NULL, SDL_FLIP_NONE);
                 default:
                     break;
                 }
@@ -728,6 +760,12 @@ void Player::display()
     {
         // SDL_Quit();
     }
+
+    SDL_Rect lastblood = {blood_bar.x, blood_bar.y, int(hp_), 10};
+    SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
+    SDL_RenderFillRect(renderer_, &blood_bar);
+    SDL_SetRenderDrawColor(renderer_, 0, 255, 0, 255);
+    SDL_RenderFillRect(renderer_, &lastblood);
 }
 
 void Player::detect(std::vector<Weapon *> wps, std::vector<Fodder *> fods, std::vector<Solid *> obst)
@@ -749,7 +787,7 @@ void Player::detect(std::vector<Weapon *> wps, std::vector<Fodder *> fods, std::
             x_ += 2 * i->vel_x;
             y_ += 2 * i->vel_y;
         }
-        hp_ -= i->atk_;
+        hp_ -= 2;
     }
 
     for (auto i : obst)
@@ -759,9 +797,8 @@ void Player::detect(std::vector<Weapon *> wps, std::vector<Fodder *> fods, std::
         {
             Vector v(float(i->collider.x + (i->collider.w / 2) - (x_ + w_ / 2)),
                      float(i->collider.y + (i->collider.h / 2) - (y_ + h_ / 2)));
-            std::cerr << "dimen = " << dimension_ << '\n';
-            std::cerr << "velx = " << v.x << ", vely = " << v.y << '\n';
-            if (dimension_ == 2)
+
+            if (dimension_ == 3)
             {
                 x_ -= v.unit_x * speed_;
                 y_ -= v.unit_y * speed_;

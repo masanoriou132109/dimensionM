@@ -14,7 +14,7 @@ enum Math
     NONE = 6
 };
 
-class Weapon : public Solid // 這個標頭檔只處理武器被撿起來，發射出去的武器屬於player的一部分，不然會造成循環include
+class Weapon : public Solid // 這個標頭檔只處理武器被撿起來，而發射出去的武器屬於player的一部分，不然會造成循環include
 {
   private:
     float w_ = 300;
